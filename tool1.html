@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Trim-URL: Free URL shortener with QR codes, custom links, and PhotoQR options. Make your long links shorter and more shareable.">
+    <meta name="keywords" content="URL shortener, link compressor, QR code generator, custom URL, PhotoQR, free link shortener">
+    <title>Trim-URL | Advanced Link Compressor & QR Code Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f6fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .tool-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-container:hover {
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #00b5b2;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .result-container {
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .result-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .result-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .qrcode-container {
+            flex: 0 0 200px;
+        }
+        
+        #qrcode {
+            width: 200px;
+            height: 200px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .url-result {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .short-url {
+            font-size: 1.2rem;
+            word-break: break-all;
+            margin-bottom: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .photo-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .photo-upload:hover {
+            border-color: var(--primary);
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+        
+        .photo-upload i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .photo-preview {
+            max-width: 200px;
+            max-height: 200px;
+            display: none;
+            margin: 0 auto 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ad-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ad-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .feature-desc {
+            color: var(--gray);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .tool-container {
+                padding: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        /* Loading animation */
+        .loader {
+            display: none;
+            width: 48px;
+            height: 48px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">Trim-URL</div>
+            <div class="tagline">Compress, customize, and share your links with ease</div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Ad Container Top -->
+        <div class="ad-container">
+            <div class="ad-label">Advertisement</div>
+            <!-- Replace with your Google AdSense code -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"
+                crossorigin="anonymous"></script>
+            <!-- Your Ad Unit -->
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-YOUR_ADSENSE_ID"
+                data-ad-slot="YOUR_AD_SLOT_ID"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        
+        <div class="main-content">
+            <div class="tool-container">
+                <h2 class="section-title">URL Compressor</h2>
+                
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="standard">Standard</div>
+                        <div class="tab" data-tab="custom">Custom</div>
+                        <div class="tab" data-tab="photoqr">PhotoQR</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="standard-tab">
+                        <div class="input-group">
+                            <label for="original-url">Enter your long URL</label>
+                            <input type="url" id="original-url" placeholder="https://example.com/very-long-url" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="url-type">Compression Type</label>
+                            <select id="url-type">
+                                <option value="qr">QR Code Only</option>
+                                <option value="compact">Compact URL</option>
+                                <option value="both" selected>Both QR Code & Compact URL</option>
+                            </select>
+                        </div>
+                        
+                        <button id="generate-btn" class="btn">Compress URL</button>
+                    </div>
+                    
+                    <div class="tab-content" id="custom-tab">
+                        <div class="input-group">
+                            <label for="custom-original-url">Enter your long URL</label>
+                            <input type="url" id="custom-original-url" placeholder="https://example.com/very-long-url" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="custom-path">Custom Path (optional)</label>
+                            <div style="display: flex; align-items: center;">
+                                <span style="padding: 12px 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px 0 0 8px;">trim-url.com/</span>
+                                <input type="text" id="custom-path" placeholder="your-custom-path" style="border-radius: 0 8px 8px 0; flex: 1;">
+                            </div>
+                        </div>
+                        
+                        <button id="generate-custom-btn" class="btn">Create Custom URL</button>
+                    </div>
+                    
+                    <div class="tab-content" id="photoqr-tab">
+                        <div class="input-group">
+                            <label for="photoqr-original-url">Enter your long URL</label>
+                            <input type="url" id="photoqr-original-url" placeholder="https://example.com/very-long-url" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Upload an image for your QR code</label>
+                            <div class="photo-upload" id="photo-upload">
+                                <i>📷</i>
+                                <p>Click to upload an image</p>
+                                <input type="file" id="photo-input" accept="image/*" style="display: none;">
+                            </div>
+                            <img id="photo-preview" class="photo-preview" alt="Preview">
+                        </div>
+                        
+                        <button id="generate-photoqr-btn" class="btn">Generate PhotoQR</button>
+                    </div>
+                </div>
+                
+                <div class="loader" id="loader"></div>
+                
+                <div class="result-container" id="result-container">
+                    <div class="result-box">
+                        <h3 class="result-title">Your Compressed URL</h3>
+                        <div class="result-content">
+                            <div class="qrcode-container" id="qrcode-container">
+                                <div id="qrcode"></div>
+                            </div>
+                            <div class="url-result">
+                                <div class="short-url" id="short-url"></div>
+                                <div class="action-buttons">
+                                    <button id="copy-url-btn" class="btn btn-secondary">Copy URL</button>
+                                    <button id="download-qr-btn" class="btn btn-outline">Download QR Code</button>
+                                    <button id="share-btn" class="btn btn-outline">Share</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3 class="feature-title">URL Compression</h3>
+                    <p class="feature-desc">Make your long URLs shorter and more manageable with our advanced compression algorithm.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Analytics</h3>
+                    <p class="feature-desc">Track clicks and engagement with detailed analytics for your shortened links.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🖼️</div>
+                    <h3 class="feature-title">PhotoQR Codes</h3>
+                    <p class="feature-desc">Create beautiful QR codes with your own images embedded for brand recognition.</p>
+                </div>
+            </div>
+            
+            <!-- Ad Container Middle -->
+            <div class="ad-container">
+                <div class="ad-label">Advertisement</div>
+                <!-- Replace with your Google AdSense code -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"
+                    crossorigin="anonymous"></script>
+                <!-- Your Ad Unit -->
+                <ins class="adsbygoogle"
+                    style="display:block"
+                    data-ad-client="ca-pub-YOUR_ADSENSE_ID"
+                    data-ad-slot="YOUR_AD_SLOT_ID"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Trim-URL</h3>
+                    <p>Advanced URL compression and QR code generation tool for businesses and individuals.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Developers</a></li>
+                        <li><a href="#">Status</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 Trim-URL. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab') + '-tab';
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Photo upload preview
+        const photoUpload = document.getElementById('photo-upload');
+        const photoInput = document.getElementById('photo-input');
+        const photoPreview = document.getElementById('photo-preview');
+        
+        photoUpload.addEventListener('click', () => {
+            photoInput.click();
+        });
+        
+        photoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    photoPreview.src = event.target.result;
+                    photoPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Generate standard URL
+        document.getElementById('generate-btn').addEventListener('click', () => {
+            const originalUrl = document.getElementById('original-url').value;
+            const urlType = document.getElementById('url-type').value;
+            
+            if (!originalUrl) {
+                showToast('Please enter a URL');
+                return;
+            }
+            
+            // Validate URL format
+            if (!isValidUrl(originalUrl)) {
+                showToast('Please enter a valid URL (include http:// or https://)');
+                return;
+            }
+            
+            showLoader(true);
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                let shortUrl = '';
+                const domain = 'trim-url.com';
+                
+                // Generate a random short code (in a real app, this would come from your backend)
+                const shortCode = generateRandomString(6);
+                
+                // Clear previous QR code
+                document.getElementById('qrcode').innerHTML = '';
+                
+                if (urlType === 'qr' || urlType === 'both') {
+                    // Generate QR code
+                    QRCode.toCanvas(document.getElementById('qrcode'), originalUrl, {
+                        width: 200,
+                        margin: 1,
+                        color: {
+                            dark: '#6c5ce7',
+                            light: '#ffffff'
+                        }
+                    }, (error) => {
+                        if (error) console.error(error);
+                    });
+                }
+                
+                if (urlType === 'compact' || urlType === 'both') {
+                    shortUrl = `https://${domain}/${shortCode}`;
+                } else {
+                    shortUrl = originalUrl;
+                }
+                
+                document.getElementById('short-url').textContent = shortUrl;
+                document.getElementById('result-container').style.display = 'block';
+                showLoader(false);
+                
+                // Scroll to results
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+            }, 1000);
+        });
+        
+        // Generate custom URL
+        document.getElementById('generate-custom-btn').addEventListener('click', () => {
+            const originalUrl = document.getElementById('custom-original-url').value;
+            const customPath = document.getElementById('custom-path').value;
+            
+            if (!originalUrl) {
+                showToast('Please enter a URL');
+                return;
+            }
+            
+            // Validate URL format
+            if (!isValidUrl(originalUrl)) {
+                showToast('Please enter a valid URL (include http:// or https://)');
+                return;
+            }
+            
+            showLoader(true);
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                const domain = 'trim-url.com';
+                let shortUrl = '';
+                
+                if (customPath) {
+                    // Validate custom path
+                    if (!/^[a-zA-Z0-9_-]+$/.test(customPath)) {
+                        showToast('Custom path can only contain letters, numbers, hyphens and underscores');
+                        showLoader(false);
+                        return;
+                    }
+                    
+                    shortUrl = `https://${domain}/${customPath}`;
+                } else {
+                    // Generate a random short code if no custom path provided
+                    const shortCode = generateRandomString(6);
+                    shortUrl = `https://${domain}/${shortCode}`;
+                }
+                
+                // Clear previous QR code
+                document.getElementById('qrcode').innerHTML = '';
+                
+                // Generate QR code
+                QRCode.toCanvas(document.getElementById('qrcode'), shortUrl, {
+                    width: 200,
+                    margin: 1,
+                    color: {
+                        dark: '#6c5ce7',
+                        light: '#ffffff'
+                    }
+                }, (error) => {
+                    if (error) console.error(error);
+                });
+                
+                document.getElementById('short-url').textContent = shortUrl;
+                document.getElementById('result-container').style.display = 'block';
+                showLoader(false);
+                
+                // Scroll to results
+                document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+            }, 1000);
+        });
+        
+        // Generate PhotoQR
+        document.getElementById('generate-photoqr-btn').addEventListener('click', () => {
+            const originalUrl = document.getElementById('photoqr-original-url').value;
+            const photoFile = document.getElementById('photo-input').files[0];
+            
+            if (!originalUrl) {
+                showToast('Please enter a URL');
+                return;
+            }
+            
+            // Validate URL format
+            if (!isValidUrl(originalUrl)) {
+                showToast('Please enter a valid URL (include http:// or https://)');
+                return;
+            }
+            
+            if (!photoFile) {
+                showToast('Please upload an image');
+                return;
+            }
+            
+            showLoader(true);
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                const domain = 'trim-url.com';
+                const shortCode = generateRandomString(6);
+                const shortUrl = `https://${domain}/${shortCode}`;
+                
+                // Clear previous QR code
+                document.getElementById('qrcode').innerHTML = '';
+                
+                // Generate QR code with logo (simplified version)
+                const qrCodeSize = 200;
+                const logoSize = 50;
+                
+                // Create canvas for QR code
+                const canvas = document.createElement('canvas');
+                canvas.width = qrCodeSize;
+                canvas.height = qrCodeSize;
+                
+                // Generate QR code
+                QRCode.toCanvas(canvas, shortUrl, {
+                    width: qrCodeSize,
+                    margin: 1,
+                    color: {
+                        dark: '#6c5ce7',
+                        light: '#ffffff'
+                    }
+                }, (error) => {
+                    if (error) {
+                        console.error(error);
+                        showLoader(false);
+                        return;
+                    }
+                    
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Create logo image
+                    const logoImg = new Image();
+                    logoImg.onload = function() {
+                        // Calculate position to center the logo
+                        const x = (qrCodeSize - logoSize) / 2;
+                        const y = (qrCodeSize - logoSize) / 2;
+                        
+                        // Draw logo in center of QR code
+                        ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+                        
+                        // Display the final QR code
+                        document.getElementById('qrcode').appendChild(canvas);
+                        
+                        document.getElementById('short-url').textContent = shortUrl;
+                        document.getElementById('result-container').style.display = 'block';
+                        showLoader(false);
+                        
+                        // Scroll to results
+                        document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+                    };
+                    
+                    logoImg.src = URL.createObjectURL(photoFile);
+                });
+            }, 1000);
+        });
+        
+        // Copy URL button
+        document.getElementById('copy-url-btn').addEventListener('click', () => {
+            const shortUrl = document.getElementById('short-url').textContent;
+            navigator.clipboard.writeText(shortUrl).then(() => {
+                showToast('URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy URL');
+            });
+        });
+        
+        // Download QR code button
+        document.getElementById('download-qr-btn').addEventListener('click', () => {
+            const qrCodeElement = document.getElementById('qrcode');
+            const shortUrl = document.getElementById('short-url').textContent;
+            const fileName = `qr-code-${shortUrl.split('/').pop() || 'link'}.png`;
+            
+            htmlToImage.toPng(qrCodeElement)
+                .then(function (dataUrl) {
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = dataUrl;
+                    link.click();
+                    showToast('QR code downloaded!');
+                })
+                .catch(function (error) {
+                    console.error('Error generating QR code image:', error);
+                    showToast('Failed to download QR code');
+                });
+        });
+        
+        // Share button
+        document.getElementById('share-btn').addEventListener('click', () => {
+            const shortUrl = document.getElementById('short-url').textContent;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this link',
+                    text: 'Here\'s a shortened link you might find interesting:',
+                    url: shortUrl,
+                })
+                .then(() => showToast('Shared successfully'))
+                .catch((error) => {
+                    console.error('Error sharing:', error);
+                    copyToClipboardFallback(shortUrl);
+                });
+            } else {
+                copyToClipboardFallback(shortUrl);
+            }
+        });
+        
+        // Helper functions
+        function showLoader(show) {
+            document.getElementById('loader').style.display = show ? 'block' : 'none';
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        function copyToClipboardFallback(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('URL copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy URL');
+            }
+            document.body.removeChild(textarea);
+        }
+        
+        // Initialize AdSense (replace with your actual AdSense code)
+        // This is just a placeholder - you should use your actual AdSense code
+        window.addEventListener('load', () => {
+            // In a real implementation, you would initialize your AdSense code here
+            console.log('AdSense would be initialized here with your publisher ID');
+        });
+    </script>
+</body>
+</html>
