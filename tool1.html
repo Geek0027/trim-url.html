@@ -22,6 +22,7 @@
             --success: #00b894;
             --warning: #fdcb6e;
             --danger: #d63031;
+            --amazon-orange: #FF9900;
         }
         
         * {
@@ -293,12 +294,36 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         
+        .amazon-ad-container {
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
         .ad-label {
             font-size: 0.8rem;
             color: var(--gray);
             margin-bottom: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+        
+        .amazon-ad-label {
+            color: var(--amazon-orange);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .amazon-ad-label svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--amazon-orange);
         }
         
         .features {
@@ -465,22 +490,24 @@
     </header>
     
     <div class="container">
-        <!-- Ad Container Top -->
-        <div class="ad-container">
-            <div class="ad-label">Advertisement</div>
-            <!-- Replace with your Google AdSense code -->
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"
-                crossorigin="anonymous"></script>
-            <!-- Your Ad Unit -->
-            <ins class="adsbygoogle"
-                style="display:block"
-                data-ad-client="ca-pub-YOUR_ADSENSE_ID"
-                data-ad-slot="YOUR_AD_SLOT_ID"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+        <!-- Amazon Ad Container Top -->
+        <div class="amazon-ad-container">
+            <div class="amazon-ad-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M10.5 17.5h3v-3.6l3.3 3.6h3.3l-4.5-5 4.5-5h-3.3l-3.3 3.6v-3.6h-3v10zm1.5-15c5.5 0 10 4.5 10 10s-4.5 10-10 10-10-4.5-10-10 4.5-10 10-10m0-2c-6.6 0-12 5.4-12 12s5.4 12 12 12 12-5.4 12-12-5.4-12-12-12z"/>
+                </svg>
+                Amazon Picks
+            </div>
+            <div id="amazon-ad-1">
+                <!-- Amazon Native Shopping Ad will be loaded here -->
+                <script type="text/javascript">
+                    amazon_ad_tag = "dealdost03-21";
+                    amazon_ad_width = "300";
+                    amazon_ad_height = "250";
+                    amazon_ad_link_target = "_blank";
+                </script>
+                <script type="text/javascript" src="//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US"></script>
+            </div>
         </div>
         
         <div class="main-content">
@@ -591,22 +618,24 @@
                 </div>
             </div>
             
-            <!-- Ad Container Middle -->
-            <div class="ad-container">
-                <div class="ad-label">Advertisement</div>
-                <!-- Replace with your Google AdSense code -->
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID"
-                    crossorigin="anonymous"></script>
-                <!-- Your Ad Unit -->
-                <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-YOUR_ADSENSE_ID"
-                    data-ad-slot="YOUR_AD_SLOT_ID"
-                    data-ad-format="auto"
-                    data-full-width-responsive="true"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
+            <!-- Amazon Ad Container Middle -->
+            <div class="amazon-ad-container">
+                <div class="amazon-ad-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M10.5 17.5h3v-3.6l3.3 3.6h3.3l-4.5-5 4.5-5h-3.3l-3.3 3.6v-3.6h-3v10zm1.5-15c5.5 0 10 4.5 10 10s-4.5 10-10 10-10-4.5-10-10 4.5-10 10-10m0-2c-6.6 0-12 5.4-12 12s5.4 12 12 12 12-5.4 12-12-5.4-12-12-12z"/>
+                    </svg>
+                    Recommended Products
+                </div>
+                <div id="amazon-ad-2">
+                    <!-- Amazon Native Shopping Ad will be loaded here -->
+                    <script type="text/javascript">
+                        amazon_ad_tag = "dealdost03-21";
+                        amazon_ad_width = "300";
+                        amazon_ad_height = "250";
+                        amazon_ad_link_target = "_blank";
+                    </script>
+                    <script type="text/javascript" src="//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US"></script>
+                </div>
             </div>
         </div>
     </div>
@@ -1000,11 +1029,10 @@
             document.body.removeChild(textarea);
         }
         
-        // Initialize AdSense (replace with your actual AdSense code)
-        // This is just a placeholder - you should use your actual AdSense code
+        // Initialize Amazon Ads
         window.addEventListener('load', () => {
-            // In a real implementation, you would initialize your AdSense code here
-            console.log('AdSense would be initialized here with your publisher ID');
+            // Amazon ads are loaded via their script
+            console.log('Amazon Native Shopping Ads initialized with dealdost03-21');
         });
     </script>
 </body>
